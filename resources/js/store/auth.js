@@ -1,5 +1,8 @@
+import { OK } from '../util'
+
 const state = {
-  user: null
+  user: null,
+  apiStatus: null
 }
 
 const getters = {
@@ -10,6 +13,9 @@ const getters = {
 const mutations = {
   setUser (state, user) {
     state.user = user
+  },
+  setApiStatus (state, status) {
+    state.apiStatus = status
   }
 }
 
@@ -19,8 +25,22 @@ const actions = {
     context.commit('setUser', response.data)
   },
   async login (context, data) {
+    context.commit('setApiStatus', null)
+    // API 通信が成功した場合も失敗した場合も response にレスポンスオブジェクトを代入
     const response = await axios.post('/api/login', data)
-    context.commit('setUser', response.data)
+      .catch(err => err.response || err)
+  
+    // 成功したらtrue
+    if (response.status === OK) {
+      context.commit('setApiStatus', true)
+      context.commit('setUser', response.data)
+      return false
+    }
+    // 失敗したらfalse
+    context.commit('setApiStatus', false)
+    // 通信に失敗した場合に error モジュールの setCode ミューテーションを commit する
+    // あるストアモジュールから別のモジュールのミューテーションを commit する場合は第三引数に { root: true } を追加
+    context.commit('error/setCode', response.status, { root: true })
   },
   async logout (context) {
     const response = await axios.post('/api/logout')
