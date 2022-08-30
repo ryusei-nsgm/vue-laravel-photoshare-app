@@ -19,6 +19,13 @@ const routes = [
     component: PhotoList
   },
   {
+    // props: true でプロップスを受け取る設定
+    // :id にプロップスが反映される
+    path: '/photos/:id',
+    component: PhotoDetail,
+    props: true
+  },
+  {
     path: '/login',
     component: Login,
     beforeEnter (to, from, next) {
