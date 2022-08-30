@@ -3,9 +3,10 @@
     <RouterLink class="navbar__brand" to="/">
       Photo Share
     </RouterLink>
+    <PhotoForm v-model="showForm" />
     <div class="navbar__menu">
       <div v-if="isLogin" class="navbar__item">
-        <button class="button">
+        <button class="button" @click="showForm = !showForm">
           <i class="icon ion-md-add"></i>
           Submit a photo
         </button>
@@ -23,7 +24,17 @@
 </template>
 
 <script>
+import PhotoForm from './PhotoForm.vue'
+
 export default {
+  components: {
+    PhotoForm
+  },
+  data () {
+    return {
+      showForm: false
+    }
+  },
   computed: {
     isLogin () {
       return this.$store.getters['auth/check']
